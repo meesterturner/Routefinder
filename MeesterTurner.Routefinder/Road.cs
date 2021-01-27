@@ -20,6 +20,11 @@ namespace MeesterTurner.Routefinder
             return Math.Sqrt(xDist + yDist);
         }
 
+        public Road()
+        {
+
+        }
+
         public Road(int fromX, int fromY, int toX, int toY)
         {
             From.x = fromX;

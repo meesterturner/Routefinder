@@ -28,18 +28,34 @@ namespace PathfinderTest
         public MainWindow()
         {
             InitializeComponent();
+            AddRoads();
+        }
 
-            rf.AddRoad(0, 0, 0, 5);
-            rf.AddRoad(0, 0, 3, 0);
-            rf.AddRoad(3, 0, 4, 3);
-            rf.AddRoad(4, 3, 2, 1);
-            rf.AddRoad(2, 1, 0, 5);
-            rf.AddRoad(2, 1, 3, 0);
-            rf.AddRoad(3, 0, 5, 1);
-            rf.AddRoad(0, 5, 3, 5);
-            rf.AddRoad(0, 0, 1, 1);
-            rf.AddRoad(1, 1, 2, 1);
-            rf.AddRoad(1, 1, 1, 2);
+        private void AddRoads()
+        {
+            //rf.AddRoad(0, 0, 0, 5);
+            //rf.AddRoad(0, 0, 3, 0);
+            //rf.AddRoad(3, 0, 4, 3);
+            //rf.AddRoad(4, 3, 2, 1);
+            //rf.AddRoad(2, 1, 0, 5);
+            //rf.AddRoad(2, 1, 3, 0);
+            //rf.AddRoad(3, 0, 5, 1);
+            //rf.AddRoad(0, 5, 3, 5);
+            //rf.AddRoad(0, 0, 1, 1);
+            //rf.AddRoad(1, 1, 2, 1);
+            //rf.AddRoad(1, 1, 1, 2);
+
+            Random r = new Random();
+
+            for (int x = 0; x <= 9; x++)
+            {
+                int ry = r.Next(5, 10);
+                for (int y = 0; y <= ry; y++)
+                {
+                    rf.AddRoad(x, y, x + 1, y);
+                    rf.AddRoad(x + 1, y, x + 1, y + 1);
+                }
+            }
 
             DrawRoads();
             DrawPoints();
@@ -135,6 +151,8 @@ namespace PathfinderTest
             rf.StartY = Convert.ToInt32(txtFromY.Text);
             rf.DestinationX = Convert.ToInt32(txtToX.Text);
             rf.DestinationY = Convert.ToInt32(txtToY.Text);
+
+            rf.Method = FinderMethod.AStar;
 
             Stopwatch sw = new Stopwatch();
             sw.Start();

@@ -16,6 +16,11 @@ namespace MeesterTurner.Routefinder
         public int DestinationX { get; set; }
         public int DestinationY { get; set; }
 
+        public FinderMethod Method { get; set; } = FinderMethod.Dijkstra;
+
+        private double shortestSuccess;
+        private Dictionary<(int x, int y), int> nodeCost;
+
         public void AddRoad(int fromX, int fromY, int toX, int toY)
         {
             allRoads.Add(new Road(fromX, fromY, toX, toY));
@@ -34,15 +39,51 @@ namespace MeesterTurner.Routefinder
                 throw new ArgumentException("Start and Destination points are the same");
 
             journeys = new List<Journey>();
+            shortestSuccess = -1;
+
+            if (Method == FinderMethod.AStar)
+                CalculateCosts();
+
             Build(StartX, StartY, new Journey());
+        }
+
+        private void CalculateCosts()
+        {
+            nodeCost = new Dictionary<(int x, int y), int>();
+            foreach(Road r in allRoads)
+            {
+                (int x, int y) node = (-1, -1);
+                for (int i = 0; i < 2; i++)
+                {
+                    node = (i == 0 ? r.From : r.To);
+                
+                    if(!nodeCost.ContainsKey(node))
+                    {
+                        int gridDistFromStart = Math.Abs(node.x - StartX) + Math.Abs(node.y - StartY);
+                        int xDist = Convert.ToInt32(Math.Pow(node.x - DestinationX, 2));
+                        int yDist = Convert.ToInt32(Math.Pow(node.y - DestinationY, 2));
+
+                        int lineDistToEnd = (xDist + yDist); // Math.Sqrt
+
+                        nodeCost[(node.x, node.y)] = gridDistFromStart + lineDistToEnd;
+                    }
+                }
+            }
         }
 
         private void Build(int x, int y, Journey history)
         {
-            List<Road> fromHere = new List<Road>();
+            if (Method == FinderMethod.AStar && journeys.Count > 1)
+                return;
+
+            List<CostedRoad> fromHere = new List<CostedRoad>();
             foreach(Road p in allRoads)
                 if (p.From == (x, y) || p.To == (x, y))
-                    fromHere.Add(new Road(p.From, p.To));
+                    fromHere.Add(new CostedRoad()
+                    {
+                        From = p.From,
+                        To = p.To
+                    });
 
             foreach(Road r in history.Roads)
             {
@@ -64,7 +105,31 @@ namespace MeesterTurner.Routefinder
                     fromHere.RemoveAt(p);
             }
 
-            foreach(Road f in fromHere)
+            List<CostedRoad> nextPath = null;
+            switch(Method)
+            {
+                case FinderMethod.Dijkstra:
+                    nextPath = fromHere;
+                    break;
+
+                case FinderMethod.AStar:
+                    for(int i = 0; i < fromHere.Count; i++)
+                    {
+                        CostedRoad f = fromHere[i];
+                        if (f.From.x == x && f.From.y == y)
+                            f.Cost = nodeCost[(f.To.x, f.To.y)];
+                        else
+                            f.Cost = nodeCost[(f.From.x, f.From.y)];
+                    }
+
+                    nextPath = (from CostedRoad cr in fromHere orderby cr.Cost select cr).ToList();
+                    break;
+
+                default:
+                    throw new ArgumentException("Invalid Method");
+            }
+
+            foreach(Road f in nextPath)
             {
                 Journey newPath = new Journey();
                 newPath.Roads = CopyRoutes(history.Roads);
@@ -87,9 +152,14 @@ namespace MeesterTurner.Routefinder
                 {
                     newPath.Success = true;
                     journeys.Add(newPath);
+
+                    if(shortestSuccess == -1 || newPath.Distance() < shortestSuccess)
+                        shortestSuccess = newPath.Distance();
                 }
                 else
                 {
+                    if (shortestSuccess != -1 && newPath.Distance() >= shortestSuccess)
+                        break;
                     Build(newX, newY, newPath);
                 }
             }

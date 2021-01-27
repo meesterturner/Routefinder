@@ -50,7 +50,7 @@ namespace MeesterTurner.Routefinder
         private void CalculateCosts()
         {
             nodeCost = new Dictionary<(int x, int y), int>();
-            foreach(Road r in allRoads)
+            foreach (Road r in allRoads)
             {
                 (int x, int y) node = (-1, -1);
                 for (int i = 0; i < 2; i++)
@@ -85,16 +85,34 @@ namespace MeesterTurner.Routefinder
                         To = p.To
                     });
 
-            foreach(Road r in history.Roads)
+            
+            foreach (Road fh in fromHere)
             {
-                foreach(Road fh in fromHere)
+                (int x, int y) nodeAtEndOfRoad;
+                if (fh.From.x == x && fh.From.y == y)
+                    nodeAtEndOfRoad = fh.To;
+                else
+                    nodeAtEndOfRoad = fh.From;
+
+                foreach (Road histRoad in history.Roads)
                 {
+                    
                     if(
-                        (fh.To == r.To && fh.From == r.From) ||
-                        (fh.To == r.From && fh.From == r.To)
+                        (fh.To == histRoad.To && fh.From == histRoad.From) ||
+                        (fh.To == histRoad.From && fh.From == histRoad.To)
                         )
                     {
                         fh.Taken = true;
+                        break;
+                    }
+
+                    if(Method == FinderMethod.AStar)
+                    {
+                        if(histRoad.From == nodeAtEndOfRoad || histRoad.To == nodeAtEndOfRoad)
+                        {
+                            fh.Taken = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -160,6 +178,7 @@ namespace MeesterTurner.Routefinder
                 {
                     if (shortestSuccess != -1 && newPath.Distance() >= shortestSuccess)
                         break;
+
                     Build(newX, newY, newPath);
                 }
             }

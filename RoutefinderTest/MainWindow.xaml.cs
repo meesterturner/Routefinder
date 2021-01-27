@@ -57,6 +57,12 @@ namespace PathfinderTest
                 }
             }
 
+            for(int i = 1; i <= 25; i++)
+            {
+                int rn = r.Next(20, rf.allRoads.Count - 20);
+                rf.allRoads.RemoveAt(rn);
+            }
+
             DrawRoads();
             DrawPoints();
         }

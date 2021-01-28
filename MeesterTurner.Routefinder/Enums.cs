@@ -9,6 +9,7 @@ namespace MeesterTurner.Routefinder
     public enum FinderMethod
     {
         Dijkstra,
+        AStarImperfect,
         AStar
     }
 }

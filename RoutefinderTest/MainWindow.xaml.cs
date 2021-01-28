@@ -33,7 +33,7 @@ namespace PathfinderTest
 
         private void AddRoads(int mapID)
         {
-            rf.allRoads.Clear();
+            rf.AllRoads.Clear();
 
             switch(mapID)
             {
@@ -66,8 +66,8 @@ namespace PathfinderTest
 
                     for (int i = 1; i <= 45; i++)
                     {
-                        int rn = r.Next(20, rf.allRoads.Count - 20);
-                        rf.allRoads.RemoveAt(rn);
+                        int rn = r.Next(20, rf.AllRoads.Count - 20);
+                        rf.AllRoads.RemoveAt(rn);
                     }
                     break;
             }
@@ -80,7 +80,7 @@ namespace PathfinderTest
         {
             PointsCanvas.Children.Clear();
 
-            foreach (Road r in rf.allRoads)
+            foreach (Road r in rf.AllRoads)
             {
                 for(int i = 1; i <= 2; i++)
                 {
@@ -138,7 +138,7 @@ namespace PathfinderTest
         private void DrawRoads()
         {
             MainCanvas.Children.Clear();
-            foreach (Road r in rf.allRoads)
+            foreach (Road r in rf.AllRoads)
                 DrawPath(r, Brushes.Black, 1);
         }
 
@@ -169,7 +169,7 @@ namespace PathfinderTest
             rf.DestinationX = Convert.ToInt32(txtToX.Text);
             rf.DestinationY = Convert.ToInt32(txtToY.Text);
 
-            rf.Method = FinderMethod.AStar;
+            rf.Method = FinderMethod.AStarImperfect;
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -190,9 +190,9 @@ namespace PathfinderTest
             TimeSpan ts = sw.Elapsed;
             TimeLabel.Text = string.Format("Runtime: {0}ms", ts.TotalMilliseconds.ToString("0.000"));
 
-            if(rf.journeys != null)
+            if(rf.Journeys != null)
             {
-                if (rf.journeys.Count == 0)
+                if (rf.Journeys.Count == 0)
                 {
                     MessageBox.Show("Unable to complete route");
                 }

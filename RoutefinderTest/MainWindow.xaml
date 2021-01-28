@@ -21,5 +21,7 @@
         <TextBlock HorizontalAlignment="Left" Height="13" Margin="509,304,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="121" Text="Time: " x:Name="TimeLabel"/>
         <TextBlock HorizontalAlignment="Left" Height="18" Margin="509,115,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="237" Text="Left-Click a point to select start"/>
         <TextBlock HorizontalAlignment="Left" Height="18" Margin="509,133,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="237" Text="Right-Click a point to select end"/>
+        <RadioButton x:Name="MapButton1" Content="Sample Map" HorizontalAlignment="Left" Margin="509,352,0,0" VerticalAlignment="Top" IsChecked="True" Checked="MapButton1_Checked"/>
+        <RadioButton x:Name="MapButton2" Content="Random Map" HorizontalAlignment="Left" Margin="509,370,0,0" VerticalAlignment="Top" Checked="MapButton2_Checked"/>
     </Grid>
 </Window>

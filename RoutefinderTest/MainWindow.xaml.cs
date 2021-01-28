@@ -28,39 +28,48 @@ namespace PathfinderTest
         public MainWindow()
         {
             InitializeComponent();
-            AddRoads();
+            AddRoads(1);
         }
 
-        private void AddRoads()
+        private void AddRoads(int mapID)
         {
-            //rf.AddRoad(0, 0, 0, 5);
-            //rf.AddRoad(0, 0, 3, 0);
-            //rf.AddRoad(3, 0, 4, 3);
-            //rf.AddRoad(4, 3, 2, 1);
-            //rf.AddRoad(2, 1, 0, 5);
-            //rf.AddRoad(2, 1, 3, 0);
-            //rf.AddRoad(3, 0, 5, 1);
-            //rf.AddRoad(0, 5, 3, 5);
-            //rf.AddRoad(0, 0, 1, 1);
-            //rf.AddRoad(1, 1, 2, 1);
-            //rf.AddRoad(1, 1, 1, 2);
+            rf.allRoads.Clear();
 
-            Random r = new Random();
-
-            for (int x = 0; x <= 9; x++)
+            switch(mapID)
             {
-                int ry = r.Next(5, 10);
-                for (int y = 0; y <= ry; y++)
-                {
-                    rf.AddRoad(x, y, x + 1, y);
-                    rf.AddRoad(x + 1, y, x + 1, y + 1);
-                }
-            }
+                case 1:
+                    rf.AddRoad(0, 0, 0, 5);
+                    rf.AddRoad(0, 0, 3, 0);
+                    rf.AddRoad(3, 0, 4, 3);
+                    rf.AddRoad(4, 3, 2, 1);
+                    rf.AddRoad(2, 1, 0, 5);
+                    rf.AddRoad(2, 1, 3, 0);
+                    rf.AddRoad(3, 0, 5, 1);
+                    rf.AddRoad(0, 5, 3, 5);
+                    rf.AddRoad(0, 0, 1, 1);
+                    rf.AddRoad(1, 1, 2, 1);
+                    rf.AddRoad(1, 1, 1, 2);
+                    break;
 
-            for(int i = 1; i <= 25; i++)
-            {
-                int rn = r.Next(20, rf.allRoads.Count - 20);
-                rf.allRoads.RemoveAt(rn);
+                case 2:
+                    Random r = new Random();
+
+                    for (int x = 0; x <= 9; x++)
+                    {
+                        int ry = r.Next(5, 10);
+                        for (int y = 0; y <= ry; y++)
+                        {
+                            rf.AddRoad(x, y, x + 1, y);
+                            rf.AddRoad(x + 1, y, x + 1, y + 1);
+                        }
+                    }
+
+                    for (int i = 1; i <= 45; i++)
+                    {
+                        int rn = r.Next(20, rf.allRoads.Count - 20);
+                        rf.allRoads.RemoveAt(rn);
+                    }
+                    break;
             }
 
             DrawRoads();
@@ -69,6 +78,8 @@ namespace PathfinderTest
 
         private void DrawPoints()
         {
+            PointsCanvas.Children.Clear();
+
             foreach (Road r in rf.allRoads)
             {
                 for(int i = 1; i <= 2; i++)
@@ -192,6 +203,16 @@ namespace PathfinderTest
                         DrawPath(r, Brushes.Red, 2);
                 }
             }
+        }
+
+        private void MapButton1_Checked(object sender, RoutedEventArgs e)
+        {
+            AddRoads(1);
+        }
+
+        private void MapButton2_Checked(object sender, RoutedEventArgs e)
+        {
+            AddRoads(2);
         }
     }
 }

@@ -18,9 +18,6 @@ namespace MeesterTurner.Routefinder
 
         public FinderMethod Method { get; set; } = FinderMethod.Dijkstra;
 
-        private double shortestSuccess;
-        private Dictionary<(int x, int y), int> nodeCost;
-
         public void AddRoad(int fromX, int fromY, int toX, int toY)
         {
             AllRoads.Add(new Road(fromX, fromY, toX, toY));
@@ -37,6 +34,9 @@ namespace MeesterTurner.Routefinder
         {
             if (StartX == DestinationX && StartY == DestinationY)
                 throw new ArgumentException("Start and Destination points are the same");
+
+            if (AllRoads.Count == 0)
+                throw new Exception("No roads have been specified");
 
             IFinderMethod finder = null;
             switch(Method)

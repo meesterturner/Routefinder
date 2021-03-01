@@ -28,7 +28,17 @@ namespace PathfinderTest
         public MainWindow()
         {
             InitializeComponent();
+            SetupCbo();
             AddRoads(1);
+        }
+
+        private void SetupCbo()
+        {
+            cboMethod.Items.Add(new FinderMethodOption("Dijkstra (Inefficent)", FinderMethod.Dijkstra));
+            cboMethod.Items.Add(new FinderMethodOption("A* (Bad Implementation)", FinderMethod.AStarImperfect));
+            cboMethod.Items.Add(new FinderMethodOption("A* (Correct)", FinderMethod.AStar));
+
+            cboMethod.SelectedIndex = 0;
         }
 
         private void AddRoads(int mapID)
@@ -169,7 +179,8 @@ namespace PathfinderTest
             rf.DestinationX = Convert.ToInt32(txtToX.Text);
             rf.DestinationY = Convert.ToInt32(txtToY.Text);
 
-            rf.Method = FinderMethod.AStar;
+            FinderMethodOption method = (FinderMethodOption)cboMethod.SelectedItem;
+            rf.Method = method.Method;
 
             Stopwatch sw = new Stopwatch();
             sw.Start();

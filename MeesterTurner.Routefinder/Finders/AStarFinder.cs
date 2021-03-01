@@ -13,9 +13,9 @@ namespace MeesterTurner.Routefinder
         public int DestinationY { get; set; }
         public List<Road> AllRoads { get; set; }
 
-        private List<Node> openList;
-        private List<Node> closedList;
-        private List<Node> allNodes;
+        private HashSet<Node> openList;
+        private HashSet<Node> closedList;
+        private Dictionary<(int x, int y), Node> allNodes;
 
         private Node start = null;
         private Node end = null;
@@ -127,10 +127,7 @@ namespace MeesterTurner.Routefinder
         /// </summary>
         private void Setup()
         {
-            allNodes = new List<Node>();
-
-            Dictionary<(int x, int y), bool> Calculated = new Dictionary<(int x, int y), bool>();
-            
+            allNodes = new Dictionary<(int x, int y), Node>();
 
             foreach(Road r in AllRoads)
             {
@@ -140,7 +137,7 @@ namespace MeesterTurner.Routefinder
                 {
                     nodePoint = (i == 0 ? r.From : r.To);
                     
-                    if (Calculated.ContainsKey(nodePoint) == false)
+                    if (allNodes.ContainsKey(nodePoint) == false)
                     {
                         Node n = new Node(nodePoint.x, nodePoint.y);
                         n.G = int.MaxValue;
@@ -152,8 +149,7 @@ namespace MeesterTurner.Routefinder
                         if (n.X == DestinationX && n.Y == DestinationY)
                             end = n;
 
-                        allNodes.Add(n);
-                        Calculated.Add(nodePoint, true);
+                        allNodes.Add(nodePoint, n);
                     }
                 }
             }
@@ -162,8 +158,8 @@ namespace MeesterTurner.Routefinder
             start.H = DistanceCost(start, end);
             start.CalculateF();
 
-            openList = new List<Node>();
-            closedList = new List<Node>();
+            openList = new HashSet<Node>();
+            closedList = new HashSet<Node>();
 
             openList.Add(start);
         }
@@ -177,8 +173,9 @@ namespace MeesterTurner.Routefinder
                 if (r.From.x == current.X && r.From.y == current.Y)
                     retVal.Add(NodeByPos(r.To.x, r.To.y));
 
-                if (r.To.x == current.X && r.To.y == current.Y)
+                else if (r.To.x == current.X && r.To.y == current.Y)
                     retVal.Add(NodeByPos(r.From.x, r.From.y));
+                    
             }
 
             return retVal;
@@ -186,30 +183,22 @@ namespace MeesterTurner.Routefinder
 
         private Node NodeByPos(int x, int y)
         {
-            Node retVal = null;
+            return allNodes[(x, y)];
 
-            foreach(Node n in allNodes)
-            {
-                if(n.X == x && n.Y == y)
-                {
-                    retVal = n;
-                    break;
-                }
-            }
-
-            return retVal;
         }
 
 
-        private Node GetLowestFCost(List<Node> nodes)
+        private Node GetLowestFCost(HashSet<Node> nodes)
         {
-            Node retVal = nodes[0];
-            for(int i = 1; i < nodes.Count; i++)
-            {
-                if (nodes[i].F < retVal.F)
-                    retVal = nodes[i];
-            }
+            Node retVal = null;
 
+            foreach (Node n in nodes)
+            {
+                if (retVal == null)
+                    retVal = n;
+                else if (n.F < retVal.F)
+                    retVal = n;
+            }
             return retVal;
         }
 
@@ -217,7 +206,6 @@ namespace MeesterTurner.Routefinder
         {
             int xDist = Math.Abs(from.X - to.X);
             int yDist = Math.Abs(from.Y - to.Y);
-            //int remaining = Math.Abs(xDist - yDist);
             return xDist + yDist;
 
         }

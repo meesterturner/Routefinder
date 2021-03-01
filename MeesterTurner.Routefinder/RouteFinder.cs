@@ -50,6 +50,10 @@ namespace MeesterTurner.Routefinder
                     break;
 
                 case FinderMethod.AStar:
+                    finder = new AStarFinder();
+                    break;
+
+                default:
                     throw new NotImplementedException();
             }
 

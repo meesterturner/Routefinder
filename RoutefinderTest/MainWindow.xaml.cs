@@ -169,7 +169,7 @@ namespace PathfinderTest
             rf.DestinationX = Convert.ToInt32(txtToX.Text);
             rf.DestinationY = Convert.ToInt32(txtToY.Text);
 
-            rf.Method = FinderMethod.AStarImperfect;
+            rf.Method = FinderMethod.AStar;
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
